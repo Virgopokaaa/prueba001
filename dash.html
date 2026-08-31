@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- FUERZA NO CACHÉ -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <title>PSYKOSMOS · Dashboard</title>
+    
+    <!-- CSS con timestamp forzado -->
+    <link rel="stylesheet" href="style.css?v=2">
+    <style>
+        /* Cargar fuentes GFS */
+        @font-face {
+            font-family: 'GFS';
+            src: url('fonts/GFSNeohellenic.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'GFS';
+            src: url('fonts/GFSNeohellenic-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        /* Reset y base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'GFS', 'GFS Neohellenic', sans-serif;
+            background: #0b171e;
+            color: #e0f2fe;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1300px;
+            background: rgba(8, 28, 36, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-radius: 2.5rem;
+            padding: 28px 32px;
+            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(45, 212, 191, 0.08);
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            cursor: default;
+        }
+
+        .brand-logo img {
+            height: 36px;
+            width: auto;
+            filter: drop-shadow(0 0 20px rgba(45, 212, 191, 0.1));
+        }
+
+        .brand-name {
+            background: linear-gradient(135deg, #e0f2fe, #b6e6f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #7aa9c0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-family: 'GFS', sans-serif;
+            transition: color 0.3s;
+            padding: 6px 4px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: #e0f2fe;
+            border-bottom-color: rgba(45, 212, 191, 0.3);
+        }
+
+        .nav-links a.active {
+            color: #ccf4ee;
+            border-bottom-color: rgba(45, 212, 191, 0.5);
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .main-content {
+            padding: 10px 0;
+        }
+
+        /* SECCIÓN DE ADVERTENCIA */
+        .warning-section {
+            background: rgba(255, 70, 70, 0.05);
+            border: 1px solid rgba(255, 70, 70, 0.1);
+            border-radius: 16px;
+            padding: 20px 28px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .warning-section:hover {
+            background: rgba(255, 70, 70, 0.08);
+            border-color: rgba(255, 70, 70, 0.15);
+        }
+
+        .warning-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .warning-content {
+            flex: 1;
+        }
+
+        .warning-content .warning-title {
+            font-size: 0.9rem;
+            color: #ff6b6b;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            font-family: 'GFS', sans-serif;
+        }
+
+        .warning-content .warning-text {
+            color: #d8b8b8;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            font-family: 'GFS', sans-serif;
+        }
+
+        .warning-content .warning-text .highlight-warn {
+            color: #ff6b6b;
+            font-weight: 700;
+        }
+
+        /* ENLACE A GUÍA */
+        .guide-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #7aa9c0;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-family: 'GFS', sans-serif;
+            margin-bottom: 28px;
+            padding: 8px 16px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .guide-link:hover {
+            color: #e0f2fe;
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(45, 212, 191, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .guide-link .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .guide-link:hover .arrow {
+            transform: translateX(4px);
+        }
+
+        /* GRID DE BOTONES */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 8px;
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            padding: 28px 24px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.02), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .dashboard-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(45, 212, 191, 0.15);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .dashboard-card:hover::before {
+            opacity: 1;
+        }
+
+        .dashboard-card:active {
+            transform: scale(0.97);
+        }
+
+        .dashboard-card .card-emoji {
+            font-size: 3.2rem;
+            margin-bottom: 12px;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-card:hover .card-emoji {
+            transform: scale(1.1);
+        }
+
+        .dashboard-card .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #e4f2fa;
+            margin-bottom: 8px;
+            font-family: 'GFS', sans-serif;
+        }
+
+        .dashboard-card .card-description {
+            font-size: 0.92rem;
+            color: #9bbbcb;
+            line-height: 1.5;
+            font-family: 'GFS', sans-serif;
+            flex: 1;
+        }
+
+        .dashboard-card .card-badge {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'GFS', sans-serif;
+            align-self: flex-start;
+            background: rgba(45, 212, 191, 0.1);
+            color: #2dd4bf;
+            border: 1px solid rgba(45, 212, 191, 0.1);
+        }
+
+        .dashboard-card .card-badge.soon {
+            background: rgba(255, 200, 0, 0.08);
+            color: #d4b82d;
+            border-color: rgba(255, 200, 0, 0.1);
+        }
+
+        .dashboard-card .card-badge.warning-badge {
+            background: rgba(255, 70, 70, 0.08);
+            color: #ff6b6b;
+            border-color: rgba(255, 70, 70, 0.1);
+        }
+
+        .dashboard-card.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .dashboard-card.disabled:hover {
+            transform: none;
+            background: rgba(255, 255, 255, 0.02);
+            border-color: rgba(255, 255, 255, 0.04);
+            box-shadow: none;
+        }
+
+        .dashboard-card.disabled:hover .card-emoji {
+            transform: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .app-container {
+                padding: 16px;
+                border-radius: 1.5rem;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .warning-section {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 16px 20px;
+            }
+
+            .guide-link {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .dashboard-card {
+                padding: 20px;
+            }
+
+            .dashboard-card .card-emoji {
+                font-size: 2.6rem;
+            }
+
+            .dashboard-card .card-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+
+    <!-- SCRIPT PARA RECARGAR SOLO LOS ESTILOS CUANDO SEA NECESARIO -->
+    <script>
+        (function() {
+            // Esta función recarga solo los archivos CSS, no la página completa
+            function refreshStyles() {
+                const links = document.querySelectorAll('link[rel="stylesheet"]');
+                const timestamp = Date.now();
+                links.forEach(link => {
+                    // Si es el style.css que quieres recargar
+                    if (link.href.includes('style.css')) {
+                        const url = new URL(link.href);
+                        url.searchParams.set('v', timestamp);
+                        link.href = url.toString();
+                        console.log('🔄 Estilos recargados:', link.href);
+                    }
+                });
+            }
+
+            // Ejecutar cuando la página cargue completamente
+            window.addEventListener('load', function() {
+                // Si hay un parámetro ?refresh en la URL, recargar estilos
+                if (window.location.search.includes('refresh')) {
+                    refreshStyles();
+                    // Limpiar la URL para no recargar siempre
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            });
+
+            // Para usarlo manualmente desde la consola: refreshStyles()
+            window.refreshStyles = refreshStyles;
+        })();
+    </script>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- TOP BAR -->
+        <header class="top-bar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <img src="logo.png" alt="Logo">
+                </div>
+                <span class="brand-name">| PSYKOSMOS</span>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html">Inicio</a>
+                <a href="dashboard.html" class="active">Dashboard</a>
+                <a href="capitulos.html">Capítulos</a>
+            </nav>
+        </header>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="main-content">
+
+            <!-- ADVERTENCIA -->
+            <div class="warning-section">
+                <div class="warning-icon">⚠️</div>
+                <div class="warning-content">
+                    <div class="warning-title">¡ATENCIÓN!</div>
+                    <div class="warning-text">
+                        Seguro si lees esto, eres el Bunny. Pero este proyecto está <span class="highlight-warn">JODIDAMENTE ROTO</span>.
+                        Aunque confio <span style="text-decoration:line-through; opacity:0.5;">(no)</span> en mis habilidades de programador,
+                        <span class="highlight-warn">NO PONGAS COSAS IMPORTANTES DE MOMENTO.</span>
+                        Y si lo haces, procura guardar. Esto lo hago principalmente ya que enserio que este código va a explotar en cualquier momento.
+                        <br>
+                        <span style="color:#ff6b6b; font-weight:700; font-size:0.85rem; display:inline-block; margin-top:6px;">Besitos 💋</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GUÍA -->
+            <a href="guia.pdf" class="guide-link" download>
+                <span>📖</span> ¿Perdido? Aquí la <strong>guía de cómo usarlo</strong>
+                <span class="arrow">→</span>
+            </a>
+
+            <!-- DASHBOARD GRID -->
+            <div class="dashboard-grid">
+
+                <!-- CAPÍTULOS -->
+                <a href="capitulos.html" class="dashboard-card">
+                    <span class="card-emoji">📕</span>
+                    <span class="card-title">Capítulos</span>
+                    <span class="card-description">
+                        Porno.
+                    </span>
+                    <span class="card-badge">Disponible</span>
+                </a>
+
+                <!-- PERSONAJES -->
+               <a href="capitulos.html" class="dashboard-card">
+                    <span class="card-emoji">👩‍🦲</span>
+                    <span class="card-title">Personajes</span>
+                    <span class="card-description">
+                        Personajes facheritos.
+                    </span>
+                    <span class="card-badge">Disponible</span>
+                </a>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</body>
+</html>

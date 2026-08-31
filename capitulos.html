@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSYKOSMOS · Capítulos</title>
+    
+    <!-- Quill.js CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* Cargar las fuentes GFS localmente */
+        @font-face {
+            font-family: 'GFS';
+            src: url('fonts/GFSNeohellenic.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'GFS';
+            src: url('fonts/GFSNeohellenic-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        /* Layout principal con sidebar */
+        .editor-main-layout {
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+
+        .editor-left {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .editor-right {
+            flex: 0 0 320px;
+            max-width: 320px;
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .editor-right::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .editor-right::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+        }
+
+        .editor-right::-webkit-scrollbar-thumb {
+            background: rgba(45, 212, 191, 0.2);
+            border-radius: 10px;
+        }
+
+        /* estilos específicos del editor */
+        .editor-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 70vh;
+        }
+
+        .chapter-title-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(45, 212, 191, 0.15);
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e4f2fa;
+            font-family: 'GFS', sans-serif;
+            padding: 8px 4px;
+            margin-bottom: 20px;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chapter-title-input:focus {
+            border-bottom-color: rgba(45, 212, 191, 0.5);
+        }
+
+        .chapter-title-input::placeholder {
+            color: #4a6f7f;
+            font-weight: 300;
+        }
+
+        /* Contenedor del editor Quill */
+        .editor-wrapper {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .editor-wrapper:focus-within {
+            border-color: rgba(45, 212, 191, 0.15);
+        }
+
+        #editor-container {
+            min-height: 400px;
+            color: #d8ecf5;
+            font-size: 1rem;
+            line-height: 1.8;
+            font-family: 'GFS', sans-serif;
+        }
+
+        /* Personalizar la toolbar de Quill */
+        .ql-toolbar.ql-snow {
+            background: rgba(255, 255, 255, 0.02);
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 12px 16px;
+        }
+
+        .ql-toolbar.ql-snow .ql-picker-label {
+            color: #cce2ee;
+        }
+
+        .ql-toolbar.ql-snow .ql-stroke {
+            stroke: #cce2ee;
+        }
+
+        .ql-toolbar.ql-snow .ql-fill {
+            fill: #cce2ee;
+        }
+
+        .ql-toolbar.ql-snow .ql-picker-options {
+            background: #0b171e;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .ql-toolbar.ql-snow .ql-picker-item:hover {
+            color: #e0f2fe;
+        }
+
+        .ql-container.ql-snow {
+            border: none;
+            font-family: 'GFS', sans-serif;
+        }
+
+        .ql-editor {
+            min-height: 400px;
+            padding: 24px;
+            color: #d8ecf5;
+            font-family: 'GFS', sans-serif;
+        }
+
+        .ql-editor.ql-blank::before {
+            color: #4a6f7f;
+            font-style: italic;
+            font-family: 'GFS', sans-serif;
+        }
+
+        /* Estilos GFS específicos */
+        .ql-editor strong,
+        .ql-editor b {
+            font-family: 'GFS', sans-serif;
+            font-weight: 700;
+            color: #e4f2fa;
+        }
+
+        .ql-editor h1 {
+            font-size: 2.2rem;
+            color: #e4f2fa;
+            font-family: 'GFS', sans-serif;
+        }
+        .ql-editor h2 {
+            font-size: 1.8rem;
+            color: #e4f2fa;
+            font-family: 'GFS', sans-serif;
+        }
+        .ql-editor h3 {
+            font-size: 1.4rem;
+            color: #e4f2fa;
+            font-family: 'GFS', sans-serif;
+        }
+        .ql-editor a {
+            color: #2dd4bf;
+        }
+        .ql-editor blockquote {
+            border-left: 3px solid rgba(45, 212, 191, 0.3);
+            padding-left: 16px;
+            margin: 12px 0;
+            color: #9bbbcb;
+            font-family: 'GFS', sans-serif;
+        }
+        .ql-editor code {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #ccf4ee;
+        }
+        .ql-editor ul, .ql-editor ol {
+            font-family: 'GFS', sans-serif;
+        }
+        .ql-editor p {
+            font-family: 'GFS', sans-serif;
+        }
+
+        /* Estadísticas del documento */
+        .document-stats {
+            display: flex;
+            gap: 24px;
+            padding: 12px 4px;
+            color: #6a8f9f;
+            font-size: 0.85rem;
+            font-family: 'GFS', sans-serif;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .document-stats span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .document-stats .stat-value {
+            color: #b8d6e5;
+            font-weight: 700;
+        }
+
+        .editor-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: flex-start;
+        }
+
+        .editor-actions .btn-primary {
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.15), rgba(14, 159, 142, 0.05));
+            border: 1px solid rgba(45, 212, 191, 0.2);
+            color: #ccf4ee;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-family: 'GFS', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .editor-actions .btn-primary:hover {
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.25), rgba(14, 159, 142, 0.1));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(45, 212, 191, 0.1);
+        }
+
+        .editor-actions .btn-secondary {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #b8d6e5;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-family: 'GFS', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .editor-actions .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.12);
+        }
+
+        .editor-actions .btn-danger {
+            background: rgba(255, 70, 70, 0.1);
+            border: 1px solid rgba(255, 70, 70, 0.2);
+            color: #ff6b6b;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-family: 'GFS', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .editor-actions .btn-danger:hover {
+            background: rgba(255, 70, 70, 0.2);
+            border-color: rgba(255, 70, 70, 0.3);
+        }
+
+        .editor-actions .btn-warp {
+            background: linear-gradient(135deg, rgba(212, 45, 191, 0.15), rgba(159, 14, 142, 0.05));
+            border: 1px solid rgba(212, 45, 191, 0.2);
+            color: #f0ccf4;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-family: 'GFS', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+
+        .editor-actions .btn-warp:hover {
+            background: linear-gradient(135deg, rgba(212, 45, 191, 0.25), rgba(159, 14, 142, 0.1));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(212, 45, 191, 0.1);
+        }
+
+        .editor-actions .btn-warp-import {
+            background: linear-gradient(135deg, rgba(45, 191, 212, 0.15), rgba(14, 142, 159, 0.05));
+            border: 1px solid rgba(45, 191, 212, 0.2);
+            color: #ccf0f4;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-family: 'GFS', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+            position: relative;
+        }
+
+        .editor-actions .btn-warp-import:hover {
+            background: linear-gradient(135deg, rgba(45, 191, 212, 0.25), rgba(14, 142, 159, 0.1));
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(45, 191, 212, 0.1);
+        }
+
+        /* lista de capítulos (sidebar derecha) */
+        .chapter-sidebar {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .chapter-sidebar h3 {
+            color: #9bbbcb;
+            font-weight: 400;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            font-family: 'GFS', sans-serif;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chapter-sidebar h3 .count {
+            color: #4a6f7f;
+            font-size: 0.75rem;
+            letter-spacing: 0;
+        }
+
+        .chapter-list-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .chapter-item {
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.2s;
+            cursor: pointer;
+            font-family: 'GFS', sans-serif;
+        }
+
+        .chapter-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(45, 212, 191, 0.15);
+            transform: translateX(-4px);
+        }
+
+        .chapter-item.active {
+            background: rgba(45, 212, 191, 0.08);
+            border-color: rgba(45, 212, 191, 0.2);
+        }
+
+        .chapter-item .chapter-title {
+            color: #d8ecf5;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 4px;
+        }
+
+        .chapter-item .chapter-title .synopsis-preview {
+            color: #6a8f9f;
+            font-weight: 400;
+            font-size: 0.8rem;
+            margin-left: 8px;
+        }
+
+        .chapter-item .chapter-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #4a6f7f;
+            font-size: 0.7rem;
+        }
+
+        .chapter-item .chapter-meta .date {
+            font-size: 0.7rem;
+        }
+
+        .chapter-item .chapter-actions-sidebar {
+            display: flex;
+            gap: 6px;
+        }
+
+        .chapter-item .chapter-actions-sidebar button {
+            background: transparent;
+            border: none;
+            color: #4a6f7f;
+            cursor: pointer;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            transition: all 0.2s;
+            font-family: 'GFS', sans-serif;
+        }
+
+        .chapter-item .chapter-actions-sidebar button:hover {
+            color: #b8d6e5;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .chapter-item .chapter-actions-sidebar button.delete:hover {
+            color: #ff6b6b;
+            background: rgba(255, 70, 70, 0.1);
+        }
+
+        .empty-chapters {
+            color: #4a6f7f;
+            font-style: italic;
+            padding: 20px 0;
+            font-family: 'GFS', sans-serif;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        /* Modal para editar/crear capítulo */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #0f1f28;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(45, 212, 191, 0.1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            color: #e4f2fa;
+            font-family: 'GFS', sans-serif;
+            font-weight: 700;
+            margin-bottom: 24px;
+            font-size: 1.5rem;
+        }
+
+        .modal-content .form-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-content .form-group label {
+            display: block;
+            color: #9bbbcb;
+            font-family: 'GFS', sans-serif;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .modal-content .form-group input,
+        .modal-content .form-group textarea,
+        .modal-content .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            color: #d8ecf5;
+            font-family: 'GFS', sans-serif;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .modal-content .form-group input:focus,
+        .modal-content .form-group textarea:focus,
+        .modal-content .form-group select:focus {
+            border-color: rgba(45, 212, 191, 0.2);
+        }
+
+        .modal-content .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-content .form-group select option {
+            background: #0f1f28;
+            color: #d8ecf5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .modal-actions button {
+            padding: 10px 28px;
+            border-radius: 60px;
+            font-family: 'GFS', sans-serif;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 0.9rem;
+        }
+
+        .modal-actions .btn-modal-primary {
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.2), rgba(14, 159, 142, 0.1));
+            color: #ccf4ee;
+            border: 1px solid rgba(45, 212, 191, 0.2);
+        }
+
+        .modal-actions .btn-modal-primary:hover {
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.3), rgba(14, 159, 142, 0.15));
+        }
+
+        .modal-actions .btn-modal-secondary {
+            background: rgba(255, 255, 255, 0.03);
+            color: #b8d6e5;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .modal-actions .btn-modal-secondary:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        /* input file oculto */
+        #warpImportInput {
+            display: none;
+        }
+
+        /* responsive */
+        @media (max-width: 900px) {
+            .editor-main-layout {
+                flex-direction: column;
+            }
+            .editor-right {
+                flex: 1;
+                max-width: 100%;
+                position: static;
+                max-height: none;
+                width: 100%;
+            }
+            .chapter-sidebar {
+                max-height: 300px;
+                overflow-y: auto;
+            }
+            .chapter-item:hover {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .editor-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .modal-content {
+                padding: 20px;
+            }
+            .document-stats {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <header class="top-bar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <img src="logo.png" alt="Logologo" style="height:32px; width:auto;">
+                </div>
+                <span class="brand-name">| PSYKOSMOS</span>
+            </div>
+            <div style="display:flex; gap:12px; align-items:center;">
+                <a href="dash.html" style="color:#7aa9c0; text-decoration:none; font-size:0.9rem; border:1px solid rgba(255,255,255,0.04); padding:6px 18px; border-radius:40px; font-family:'GFS', sans-serif;">↩ Volver</a>
+            </div>
+        </header>
+
+        <main class="main-content">
+
+            <div class="editor-main-layout">
+
+                <!-- COLUMNA IZQUIERDA: Editor -->
+                <div class="editor-left">
+                    <div class="editor-layout">
+
+                        <!-- título del capítulo -->
+                        <input type="text" class="chapter-title-input" id="chapterTitle" placeholder="Título del capítulo..." value="PINGA">
+
+                        <!-- editor WYSIWYG con Quill -->
+                        <div class="editor-wrapper">
+                            <div id="editor-container"></div>
+                        </div>
+
+                        <!-- Estadísticas -->
+                        <div class="document-stats">
+                            <span>📝 <span class="stat-value" id="wordCount">0</span> palabras</span>
+                            <span>📄 <span class="stat-value" id="charCount">0</span> caracteres</span>
+                            <span>📖 <span class="stat-value" id="paragraphCount">0</span> párrafos</span>
+                            <span>🕐 Última modificación: <span class="stat-value" id="lastModified">-</span></span>
+                        </div>
+
+                        <!-- acciones -->
+                        <div class="editor-actions">
+                            <button class="btn-primary" id="editChapterBtn">✏️ Editar</button>
+                            <button class="btn-secondary" id="exportTxtBtn">📄 .txt</button>
+                            <button class="btn-secondary" id="exportPdfBtn">📑 PDF</button>
+                            <button class="btn-primary" id="saveChapterBtn">💾 Guardar</button>
+                            <button class="btn-danger" id="deleteChapterBtn">🗑 Eliminar</button>
+                            <button class="btn-warp" id="exportWarpBtn">🌀 Exportar .warp</button>
+                            <button class="btn-warp-import" id="importWarpBtn">🌀 Importar .warp</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- COLUMNA DERECHA: Lista de capítulos -->
+                <div class="editor-right">
+                    <div class="chapter-sidebar">
+                        <h3>
+                            📖 Capítulos
+                            <span class="count" id="chapterCount">0</span>
+                        </h3>
+                        <div style="margin-bottom: 12px;">
+                            <button class="btn-primary" id="newChapterBtn" style="width:100%; padding:8px; font-size:0.85rem; text-align:center;">+ Nuevo capítulo</button>
+                        </div>
+                        <div class="chapter-list-items" id="chapterListItems">
+                            <div class="empty-chapters">No hay capítulos guardados aún.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- Input oculto para importar .warp -->
+    <input type="file" id="warpImportInput" accept=".warp,.json">
+
+    <!-- Modal para editar/crear capítulo -->
+    <div class="modal-overlay" id="chapterModal">
+        <div class="modal-content">
+            <h2 id="modalTitle">📝 Nuevo capítulo</h2>
+            
+            <div class="form-group">
+                <label for="modalChapterTitle">Título del capítulo *</label>
+                <input type="text" id="modalChapterTitle" placeholder="Ej: El despertar" value="">
+            </div>
+
+            <div class="form-group">
+                <label for="modalSynopsis">Sinopsis</label>
+                <textarea id="modalSynopsis" placeholder="Breve descripción del capítulo..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="modalTags">Etiquetas (separadas por comas)</label>
+                <input type="text" id="modalTags" placeholder="Ej: acción, misterio, presentación">
+            </div>
+
+            <div class="form-group">
+                <label for="modalStatus">Estado</label>
+                <select id="modalStatus">
+                    <option value="borrador">📝 Borrador</option>
+                    <option value="en progreso">✍️ En progreso</option>
+                    <option value="completado">✅ Completado</option>
+                    <option value="archivado">📦 Archivado</option>
+                </select>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-modal-secondary" id="modalCancelBtn">Cancelar</button>
+                <button class="btn-modal-primary" id="modalSaveBtn">💾 Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quill.js -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+    <script>
+        (function() {
+            // ----------------------------------------------
+            // 1. Inicializar Quill
+            // ----------------------------------------------
+            const quill = new Quill('#editor-container', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],
+                        ['blockquote', 'code-block'],
+                        [{ 'header': [1, 2, 3, false] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'script': 'sub'}, { 'script': 'super' }],
+                        [{ 'indent': '-1'}, { 'indent': '+1' }],
+                        [{ 'align': [] }],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Escribe tu capítulo aquí...'
+            });
+
+            // ----------------------------------------------
+            // 2. Referencias DOM
+            // ----------------------------------------------
+            const titleInput = document.getElementById('chapterTitle');
+            const saveBtn = document.getElementById('saveChapterBtn');
+            const newBtn = document.getElementById('newChapterBtn');
+            const editBtn = document.getElementById('editChapterBtn');
+            const deleteBtn = document.getElementById('deleteChapterBtn');
+            const exportTxtBtn = document.getElementById('exportTxtBtn');
+            const exportPdfBtn = document.getElementById('exportPdfBtn');
+            const exportWarpBtn = document.getElementById('exportWarpBtn');
+            const importWarpBtn = document.getElementById('importWarpBtn');
+            const warpImportInput = document.getElementById('warpImportInput');
+            const chapterListContainer = document.getElementById('chapterListItems');
+            const chapterCount = document.getElementById('chapterCount');
+            
+            // Estadísticas
+            const wordCountEl = document.getElementById('wordCount');
+            const charCountEl = document.getElementById('charCount');
+            const paragraphCountEl = document.getElementById('paragraphCount');
+            const lastModifiedEl = document.getElementById('lastModified');
+
+            // Modal
+            const modal = document.getElementById('chapterModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalChapterTitle = document.getElementById('modalChapterTitle');
+            const modalSynopsis = document.getElementById('modalSynopsis');
+            const modalTags = document.getElementById('modalTags');
+            const modalStatus = document.getElementById('modalStatus');
+            const modalSaveBtn = document.getElementById('modalSaveBtn');
+            const modalCancelBtn = document.getElementById('modalCancelBtn');
+
+            // ----------------------------------------------
+            // 3. Estado
+            // ----------------------------------------------
+            const STORAGE_KEY = 'psykosmos_chapters_v2';
+            let chapters = [];
+            let currentChapterId = null;
+            let isEditing = false;
+
+            // ----------------------------------------------
+            // 4. Funciones de estadísticas
+            // ----------------------------------------------
+            function updateStats() {
+                const text = quill.getText() || '';
+                const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+                const chars = text.length;
+                const paragraphs = text.trim() ? text.split(/\n+/).filter(p => p.trim()).length : 0;
+                
+                wordCountEl.textContent = words;
+                charCountEl.textContent = chars;
+                paragraphCountEl.textContent = paragraphs;
+                
+                if (currentChapterId) {
+                    const ch = chapters.find(c => c.id === currentChapterId);
+                    if (ch && ch.updated) {
+                        const date = new Date(ch.updated);
+                        lastModifiedEl.textContent = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                    } else {
+                        lastModifiedEl.textContent = 'Ahora';
+                    }
+                } else {
+                    lastModifiedEl.textContent = '-';
+                }
+            }
+
+            quill.on('text-change', updateStats);
+
+            // ----------------------------------------------
+            // 5. Cargar/Guardar capítulos
+            // ----------------------------------------------
+            function loadChapters() {
+                try {
+                    const stored = localStorage.getItem(STORAGE_KEY);
+                    if (stored) {
+                        chapters = JSON.parse(stored);
+                        chapters = chapters.filter(c => c && typeof c === 'object' && c.title !== undefined);
+                        chapters.forEach(c => { 
+                            if (!c.id) c.id = Date.now() + '_' + Math.random().toString(36).slice(2,6);
+                            if (!c.synopsis) c.synopsis = '';
+                            if (!c.tags) c.tags = [];
+                            if (!c.status) c.status = 'borrador';
+                            if (!c.updated) c.updated = new Date().toISOString();
+                        });
+                    } else {
+                        chapters = [{
+                            id: 'ch1_' + Date.now(),
+                            title: 'El comienzo',
+                            synopsis: 'El inicio de una gran historia...',
+                            tags: ['introducción', 'misterio'],
+                            status: 'completado',
+                            content: '<p>Este es el contenido del capítulo. Puedes usar <strong>negritas</strong> (con GFS Bold), <em>cursivas</em>, alineaciones y tamaños.</p><p><strong>La historia</strong> comienza en un lugar oscuro...</p><ul><li>Puedes crear listas</li><li>Y añadir <em>estilo</em> visual</li></ul><blockquote>Las ideas fluyen mejor cuando ves el formato en tiempo real.</blockquote>',
+                            updated: new Date().toISOString()
+                        }];
+                    }
+                } catch(e) {
+                    chapters = [];
+                }
+                renderChapterList();
+                updateStats();
+            }
+
+            function saveChapters() {
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(chapters));
+                } catch(e) {
+                    console.warn('No se pudo guardar en localStorage', e);
+                }
+                renderChapterList();
+                updateStats();
+            }
+
+            // ----------------------------------------------
+            // 6. Renderizar lista de capítulos
+            // ----------------------------------------------
+            function renderChapterList() {
+                if (!chapterListContainer) return;
+                chapterCount.textContent = chapters.length;
+                
+                if (chapters.length === 0) {
+                    chapterListContainer.innerHTML = `<div class="empty-chapters">No hay capítulos guardados aún.</div>`;
+                    return;
+                }
+                
+                let html = '';
+                const sorted = [...chapters].sort((a, b) => new Date(b.updated || 0) - new Date(a.updated || 0));
+                
+                sorted.forEach((ch) => {
+                    const displayTitle = ch.title && ch.title.trim() ? ch.title.trim() : '(sin título)';
+                    const isActive = ch.id === currentChapterId;
+                    const statusEmoji = {
+                        'borrador': '📝',
+                        'en progreso': '✍️',
+                        'completado': '✅',
+                        'archivado': '📦'
+                    }[ch.status] || '📝';
+                    
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = ch.content || '';
+                    const plainText = tempDiv.textContent || '';
+                    const shortContent = plainText.slice(0, 50) + (plainText.length > 50 ? '…' : '');
+                    
+                    const date = new Date(ch.updated);
+                    const dateStr = date.toLocaleDateString();
+                    
+                    html += `
+                        <div class="chapter-item ${isActive ? 'active' : ''}" data-chapter-id="${ch.id}">
+                            <div class="chapter-title" style="cursor:pointer;" onclick="window.loadChapterById('${ch.id}')">
+                                ${statusEmoji} ${displayTitle}
+                                ${ch.synopsis ? `<span class="synopsis-preview">— ${ch.synopsis.slice(0, 30)}${ch.synopsis.length > 30 ? '…' : ''}</span>` : ''}
+                            </div>
+                            <div class="chapter-meta">
+                                <span class="date">${dateStr}</span>
+                                <div class="chapter-actions-sidebar">
+                                    <button onclick="window.editChapter('${ch.id}')" title="Editar">✏️</button>
+                                    <button class="delete" onclick="window.deleteChapter('${ch.id}')" title="Eliminar">🗑</button>
+                                </div>
+                            </div>
+                            ${shortContent ? `<div style="color:#4a6f7f; font-size:0.7rem; margin-top:4px; padding-left:4px;">${shortContent}</div>` : ''}
+                        </div>
+                    `;
+                });
+                
+                chapterListContainer.innerHTML = html;
+
+                window.loadChapterById = loadChapterById;
+                window.editChapter = editChapter;
+                window.deleteChapter = deleteChapter;
+            }
+
+            // ----------------------------------------------
+            // 7. CRUD
+            // ----------------------------------------------
+            function getCurrentChapterData() {
+                return {
+                    title: titleInput.value.trim() || 'Sin título',
+                    content: quill.root.innerHTML
+                };
+            }
+
+            function loadChapterById(id) {
+                const ch = chapters.find(c => c.id === id);
+                if (ch) {
+                    currentChapterId = ch.id;
+                    titleInput.value = ch.title || '';
+                    quill.root.innerHTML = ch.content || '';
+                    updateStats();
+                    renderChapterList();
+                }
+            }
+
+            function deleteChapter(id) {
+                if (!confirm(`¿Eliminar el capítulo "${chapters.find(c => c.id === id)?.title || 'sin título'}"?`)) return;
+                chapters = chapters.filter(c => c.id !== id);
+                if (currentChapterId === id) {
+                    currentChapterId = null;
+                    titleInput.value = '';
+                    quill.root.innerHTML = '';
+                }
+                saveChapters();
+                renderChapterList();
+                updateStats();
+            }
+
+            function saveCurrentChapter() {
+                const data = getCurrentChapterData();
+                const plainText = quill.getText().trim();
+                if (!data.title && !plainText) {
+                    alert('El capítulo está vacío. Escribe algo antes de guardar.');
+                    return;
+                }
+                if (!data.title) data.title = 'Sin título';
+                
+                if (currentChapterId) {
+                    const existing = chapters.find(c => c.id === currentChapterId);
+                    if (existing) {
+                        existing.title = data.title;
+                        existing.content = data.content;
+                        existing.updated = new Date().toISOString();
+                    } else {
+                        chapters.push({
+                            id: 'ch_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+                            title: data.title,
+                            synopsis: '',
+                            tags: [],
+                            status: 'borrador',
+                            content: data.content,
+                            updated: new Date().toISOString()
+                        });
+                        currentChapterId = chapters[chapters.length - 1].id;
+                    }
+                } else {
+                    chapters.push({
+                        id: 'ch_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+                        title: data.title,
+                        synopsis: '',
+                        tags: [],
+                        status: 'borrador',
+                        content: data.content,
+                        updated: new Date().toISOString()
+                    });
+                    currentChapterId = chapters[chapters.length - 1].id;
+                }
+                
+                saveChapters();
+                renderChapterList();
+                updateStats();
+            }
+
+            function newChapter() {
+                isEditing = false;
+                modalTitle.textContent = '📝 Nuevo capítulo';
+                modalChapterTitle.value = '';
+                modalSynopsis.value = '';
+                modalTags.value = '';
+                modalStatus.value = 'borrador';
+                modal.classList.add('show');
+                modalChapterTitle.focus();
+            }
+
+            function editChapter(id) {
+                const ch = chapters.find(c => c.id === id);
+                if (!ch) return;
+                
+                isEditing = true;
+                modalTitle.textContent = '✏️ Editar capítulo';
+                modalChapterTitle.value = ch.title || '';
+                modalSynopsis.value = ch.synopsis || '';
+                modalTags.value = Array.isArray(ch.tags) ? ch.tags.join(', ') : '';
+                modalStatus.value = ch.status || 'borrador';
+                modal.dataset.editId = id;
+                modal.classList.add('show');
+                modalChapterTitle.focus();
+            }
+
+            function saveModalChapter() {
+                const title = modalChapterTitle.value.trim() || 'Sin título';
+                const synopsis = modalSynopsis.value.trim();
+                const tags = modalTags.value.split(',').map(t => t.trim()).filter(t => t);
+                const status = modalStatus.value;
+                
+                if (isEditing) {
+                    const id = modal.dataset.editId;
+                    const ch = chapters.find(c => c.id === id);
+                    if (ch) {
+                        ch.title = title;
+                        ch.synopsis = synopsis;
+                        ch.tags = tags;
+                        ch.status = status;
+                        ch.updated = new Date().toISOString();
+                        saveChapters();
+                        if (currentChapterId === id) {
+                            titleInput.value = title;
+                        }
+                    }
+                } else {
+                    const newChapterData = {
+                        id: 'ch_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+                        title: title,
+                        synopsis: synopsis,
+                        tags: tags,
+                        status: status,
+                        content: '<p>Escribe tu contenido aquí...</p>',
+                        updated: new Date().toISOString()
+                    };
+                    chapters.push(newChapterData);
+                    saveChapters();
+                    currentChapterId = newChapterData.id;
+                    titleInput.value = title;
+                    quill.root.innerHTML = newChapterData.content;
+                    updateStats();
+                }
+                
+                modal.classList.remove('show');
+                renderChapterList();
+                updateStats();
+            }
+
+            // ----------------------------------------------
+            // 8. Exportación .warp (completo)
+            // ----------------------------------------------
+            function exportWarp() {
+                if (chapters.length === 0) {
+                    alert('No hay capítulos para exportar.');
+                    return;
+                }
+
+                // Crear objeto con todos los datos
+                const warpData = {
+                    version: '1.0',
+                    exportedAt: new Date().toISOString(),
+                    totalChapters: chapters.length,
+                    chapters: chapters.map(ch => ({
+                        id: ch.id,
+                        title: ch.title,
+                        synopsis: ch.synopsis || '',
+                        tags: ch.tags || [],
+                        status: ch.status || 'borrador',
+                        content: ch.content || '',
+                        updated: ch.updated || new Date().toISOString()
+                    }))
+                };
+
+                const json = JSON.stringify(warpData, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                // Nombre del archivo con fecha
+                const date = new Date();
+                const dateStr = date.toISOString().slice(0,10);
+                a.download = `psykosmos_backup_${dateStr}.warp`;
+                
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            // ----------------------------------------------
+            // 9. Importación .warp
+            // ----------------------------------------------
+            function importWarp() {
+                warpImportInput.click();
+            }
+
+            function handleWarpImport(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        // Validar formato .warp
+                        if (!data.version || !data.chapters || !Array.isArray(data.chapters)) {
+                            alert('⚠️ El archivo no es un .warp válido o está corrupto.');
+                            return;
+                        }
+
+                        // Confirmar importación
+                        const confirmMsg = `¿Importar ${data.chapters.length} capítulos?\n\n` +
+                                         `Esto reemplazará TODOS tus capítulos actuales.\n` +
+                                         `(Versión: ${data.version}, Exportado: ${new Date(data.exportedAt).toLocaleString()})`;
+                        
+                        if (!confirm(confirmMsg)) return;
+
+                        // Migrar datos
+                        chapters = data.chapters.map(ch => ({
+                            id: ch.id || 'ch_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+                            title: ch.title || 'Sin título',
+                            synopsis: ch.synopsis || '',
+                            tags: ch.tags || [],
+                            status: ch.status || 'borrador',
+                            content: ch.content || '<p>Contenido importado...</p>',
+                            updated: ch.updated || new Date().toISOString()
+                        }));
+
+                        // Guardar y recargar
+                        saveChapters();
+                        
+                        // Cargar el primer capítulo
+                        if (chapters.length > 0) {
+                            currentChapterId = chapters[0].id;
+                            titleInput.value = chapters[0].title || '';
+                            quill.root.innerHTML = chapters[0].content || '';
+                            updateStats();
+                        }
+
+                        renderChapterList();
+                        alert(`✅ ¡Importación exitosa! Se importaron ${chapters.length} capítulos.`);
+
+                    } catch(err) {
+                        alert('⚠️ Error al leer el archivo. Asegúrate de que sea un .warp válido.');
+                        console.error(err);
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            // ----------------------------------------------
+            // 10. Exportar .txt y .pdf
+            // ----------------------------------------------
+            function exportTxt() {
+                const title = titleInput.value.trim() || 'capítulo_sin_titulo';
+                const content = quill.getText() || '';
+                const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${title}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            function exportPdf() {
+                const title = titleInput.value.trim() || 'Capítulo';
+                const contentHTML = quill.root.innerHTML || '';
+
+                const printWindow = window.open('', '_blank', 'width=800,height=600');
+                if (!printWindow) {
+                    alert('Por favor, permite ventanas emergentes para exportar PDF.');
+                    return;
+                }
+
+                const printStyles = `
+                    @font-face {
+                        font-family: 'GFS';
+                        src: url('fonts/GFSNeohellenic.ttf') format('truetype');
+                        font-weight: 400;
+                        font-style: normal;
+                    }
+                    @font-face {
+                        font-family: 'GFS';
+                        src: url('fonts/GFSNeohellenic-Bold.ttf') format('truetype');
+                        font-weight: 700;
+                        font-style: normal;
+                    }
+                    body { 
+                        font-family: 'GFS', 'GFS Neohellenic', sans-serif; 
+                        background: #0b171e; 
+                        color: #e0f2fe; 
+                        padding: 40px; 
+                        max-width: 800px; 
+                        margin: 0 auto;
+                        line-height: 1.7;
+                    }
+                    h1 { 
+                        color: #e4f2fa; 
+                        border-bottom: 1px solid rgba(45,212,191,0.2); 
+                        padding-bottom: 12px;
+                        font-family: 'GFS', sans-serif;
+                        font-weight: 700;
+                    }
+                    .content { 
+                        font-size: 1rem; 
+                        color: #d8ecf5; 
+                    }
+                    .content h1, .content h2, .content h3 { 
+                        color: #e4f2fa;
+                        font-family: 'GFS', sans-serif;
+                    }
+                    .content strong, .content b { 
+                        font-family: 'GFS', sans-serif;
+                        font-weight: 700; 
+                        color: #e4f2fa; 
+                    }
+                    .content em, .content i { 
+                        font-style: italic; 
+                        color: #ccf4ee; 
+                    }
+                    .content blockquote { 
+                        border-left: 3px solid rgba(45,212,191,0.3); 
+                        padding-left: 16px; 
+                        margin: 12px 0; 
+                        color: #9bbbcb; 
+                    }
+                    .content ul, .content ol { 
+                        padding-left: 24px; 
+                    }
+                    .content code { 
+                        background: rgba(255,255,255,0.05); 
+                        padding: 2px 6px; 
+                        border-radius: 4px; 
+                    }
+                    .footer { 
+                        margin-top: 40px; 
+                        font-size: 0.8rem; 
+                        color: #4a6f7f; 
+                        text-align: center; 
+                        border-top: 1px solid rgba(255,255,255,0.05); 
+                        padding-top: 20px;
+                        font-family: 'GFS', sans-serif;
+                    }
+                `;
+
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>${title}</title>
+                        <style>${printStyles}</style>
+                    </head>
+                    <body>
+                        <h1>${title}</h1>
+                        <div class="content">${contentHTML}</div>
+                        <div class="footer">PSYKOSMOS · ${new Date().toLocaleDateString()}</div>
+                        <script>
+                            window.onload = function() { 
+                                setTimeout(function() { window.print(); }, 400);
+                            }
+                        <\/script>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+            }
+
+            // ----------------------------------------------
+            // 11. Eventos
+            // ----------------------------------------------
+            saveBtn.addEventListener('click', saveCurrentChapter);
+            newBtn.addEventListener('click', newChapter);
+            editBtn.addEventListener('click', function() {
+                if (currentChapterId) {
+                    editChapter(currentChapterId);
+                } else {
+                    alert('No hay ningún capítulo cargado para editar.');
+                }
+            });
+            deleteBtn.addEventListener('click', function() {
+                if (currentChapterId) {
+                    deleteChapter(currentChapterId);
+                } else {
+                    alert('No hay ningún capítulo cargado para eliminar.');
+                }
+            });
+            exportTxtBtn.addEventListener('click', exportTxt);
+            exportPdfBtn.addEventListener('click', exportPdf);
+            exportWarpBtn.addEventListener('click', exportWarp);
+            importWarpBtn.addEventListener('click', importWarp);
+            
+            warpImportInput.addEventListener('change', function(e) {
+                if (this.files && this.files.length > 0) {
+                    handleWarpImport(this.files[0]);
+                    this.value = ''; // Resetear input
+                }
+            });
+
+            modalCancelBtn.addEventListener('click', function() {
+                modal.classList.remove('show');
+            });
+            modalSaveBtn.addEventListener('click', saveModalChapter);
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                    e.preventDefault();
+                    saveCurrentChapter();
+                }
+                if (e.key === 'Escape' && modal.classList.contains('show')) {
+                    modal.classList.remove('show');
+                }
+            });
+
+            // ----------------------------------------------
+            // 12. Inicializar
+            // ----------------------------------------------
+            loadChapters();
+
+            if (chapters.length > 0) {
+                const latest = chapters.sort((a,b) => new Date(b.updated || 0) - new Date(a.updated || 0))[0];
+                if (latest) {
+                    currentChapterId = latest.id;
+                    titleInput.value = latest.title || '';
+                    quill.root.innerHTML = latest.content || '';
+                    updateStats();
+                }
+            }
+
+            setInterval(updateStats, 2000);
+
+        })();
+    </script>
+
+</body>
+</html>

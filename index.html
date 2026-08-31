@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PSYKOSMOS · Inicio</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Cargar fuentes GFS */
+        @font-face {
+            font-family: 'GFS';
+            src: url('fonts/GFSNeohellenic.ttf') format('truetype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'GFS';
+            src: url('fonts/GFSNeohellenic-Bold.ttf') format('truetype');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        /* Reset y base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'GFS', 'GFS Neohellenic', sans-serif;
+            background: #0b171e;
+            color: #e0f2fe;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 1300px;
+            background: rgba(8, 28, 36, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-radius: 2.5rem;
+            padding: 28px 32px;
+            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(45, 212, 191, 0.08);
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.6rem;
+            font-weight: 700;
+            cursor: default;
+        }
+
+        .brand-logo img {
+            height: 36px;
+            width: auto;
+            filter: drop-shadow(0 0 20px rgba(45, 212, 191, 0.1));
+        }
+
+        .brand-name {
+            background: linear-gradient(135deg, #e0f2fe, #b6e6f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: #7aa9c0;
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-family: 'GFS', sans-serif;
+            transition: color 0.3s;
+            padding: 6px 4px;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-links a:hover {
+            color: #e0f2fe;
+            border-bottom-color: rgba(45, 212, 191, 0.3);
+        }
+
+        .nav-links a.active {
+            color: #ccf4ee;
+            border-bottom-color: rgba(45, 212, 191, 0.5);
+        }
+
+        /* CONTENIDO PRINCIPAL */
+        .main-content {
+            padding: 10px 0;
+        }
+
+        /* SECCIÓN HERO */
+        .hero-section {
+            text-align: center;
+            padding: 30px 0 50px 0;
+        }
+
+        .hero-logo {
+            display: inline-block;
+            animation: float 4s ease-in-out infinite;
+            margin-bottom: 24px;
+        }
+
+        .hero-logo img {
+            max-width: 160px;
+            height: auto;
+            filter: drop-shadow(0 0 40px rgba(45, 212, 191, 0.15));
+            transition: filter 0.4s ease;
+        }
+
+        .hero-logo img:hover {
+            filter: drop-shadow(0 0 60px rgba(45, 212, 191, 0.25));
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+        }
+
+        .hero-title {
+            font-size: 3.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #e0f2fe, #b6e6f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 6px;
+            margin-bottom: 12px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: #7aa9c0;
+            letter-spacing: 1px;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .hero-subtitle .highlight {
+            color: #2dd4bf;
+            font-weight: 700;
+        }
+
+        .hero-button {
+            display: inline-block;
+            padding: 16px 60px;
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.15), rgba(14, 159, 142, 0.05));
+            color: #ccf4ee;
+            font-size: 1.1rem;
+            font-family: 'GFS', sans-serif;
+            border: 1px solid rgba(45, 212, 191, 0.2);
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .hero-button:hover {
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.25), rgba(14, 159, 142, 0.1));
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(45, 212, 191, 0.15);
+            border-color: rgba(45, 212, 191, 0.4);
+        }
+
+        .hero-button:active {
+            transform: scale(0.96);
+        }
+
+        /* DIVISOR */
+        .section-divider {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(to right, transparent, rgba(45, 212, 191, 0.2), transparent);
+            margin: 20px auto 40px;
+        }
+
+        /* CARDS DE INFORMACIÓN */
+        .info-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .info-card {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 24px;
+            padding: 30px 40px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.4s ease;
+        }
+
+        .info-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(45, 212, 191, 0.08);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-card .card-image {
+            flex: 0 0 200px;
+            height: 180px;
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.08), rgba(14, 159, 142, 0.03));
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .info-card:hover .card-image {
+            border-color: rgba(45, 212, 191, 0.12);
+        }
+
+        .info-card .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info-card .card-image .placeholder-icon {
+            font-size: 4rem;
+            opacity: 0.3;
+            color: #4a6f7f;
+            user-select: none;
+        }
+
+        .info-card .card-content {
+            flex: 1;
+        }
+
+        .info-card .card-content .card-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #e4f2fa;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #e0f2fe, #b6e6f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .info-card .card-content .card-text {
+            font-size: 1rem;
+            color: #b8d6e5;
+            line-height: 1.8;
+            max-width: 600px;
+        }
+
+        .info-card .card-content .card-text br {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Card invertida (imagen a la derecha) */
+        .info-card.reverse {
+            flex-direction: row-reverse;
+        }
+
+        /* SECCIÓN BOTÓN FINAL */
+        .final-cta {
+            text-align: center;
+            padding: 40px 0 20px 0;
+            margin-top: 20px;
+        }
+
+        .final-cta .hero-button {
+            padding: 18px 80px;
+            font-size: 1.2rem;
+            letter-spacing: 6px;
+        }
+
+        .final-cta .small-note {
+            margin-top: 16px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.06);
+            letter-spacing: 2px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            .info-card {
+                flex-direction: column !important;
+                text-align: center;
+                padding: 25px;
+            }
+
+            .info-card .card-image {
+                flex: 0 0 auto;
+                width: 100%;
+                max-width: 300px;
+                height: 160px;
+            }
+
+            .info-card .card-content .card-text {
+                max-width: 100%;
+            }
+
+            .hero-title {
+                font-size: 2.8rem;
+                letter-spacing: 4px;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+                padding: 0 16px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .app-container {
+                padding: 16px;
+                border-radius: 1.5rem;
+            }
+
+            .top-bar {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .hero-title {
+                font-size: 2.2rem;
+                letter-spacing: 2px;
+            }
+
+            .hero-logo img {
+                max-width: 120px;
+            }
+
+            .info-card {
+                padding: 20px;
+            }
+
+            .info-card .card-content .card-title {
+                font-size: 1.4rem;
+            }
+
+            .hero-button {
+                padding: 14px 40px;
+                font-size: 1rem;
+                letter-spacing: 3px;
+            }
+
+            .final-cta .hero-button {
+                padding: 14px 40px;
+                font-size: 1rem;
+                letter-spacing: 3px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+
+            .hero-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .info-card .card-content .card-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- TOP BAR -->
+        <header class="top-bar">
+            <div class="brand">
+                <div class="brand-logo">
+                    <img src="logo.png" alt="Logo">
+                </div>
+                <span class="brand-name">| PSYKOSMOS</span>
+            </div>
+        </header>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="main-content">
+
+            <!-- SECCIÓN HERO -->
+            <section class="hero-section">
+                <div class="hero-logo">
+                    <img src="logo.png" alt="PSYKOSMOS">
+                </div>
+
+                <h1 class="hero-title">PSYKOSMOS</h1>
+
+                <p class="hero-subtitle">
+                    El programa para los cabrones qué no tienen ganas de ir en servicio en servicio
+                    <br>
+                    <span class="highlight">(te miro a ti pinchi StoryCamp)</span>
+                </p>
+
+                <a href="dash.html" class="hero-button" onclick="event.preventDefault();">
+                    Métete
+                </a>
+            </section>
+
+            <div class="section-divider"></div>
+
+            <!-- TARJETAS DE INFORMACIÓN -->
+            <div class="info-cards">
+
+                <!-- Card 1: Imagen izquierda -->
+                <div class="info-card">
+                    <div class="card-image">
+                        <span class="placeholder-icon">🌌</span>
+                    </div>
+                    <div class="card-content">
+                        <h2 class="card-title">¿Qué es esto?</h2>
+                        <p class="card-text">
+                            Psykosmos es un programa creado por Opokiña para el desarrollo de worldbuilding.
+                            <br>
+                            Todos estamos cansados de pasar de servicio en servicio o solo usar el bloc de notas,
+                            por lo que aquí les traigo una alternativa bien fachera para realizar sus historias.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Card 2: Imagen derecha -->
+                <div class="info-card reverse">
+                    <div class="card-image">
+                        <span class="placeholder-icon">✨</span>
+                    </div>
+                    <div class="card-content">
+                        <h2 class="card-title">No sé</h2>
+                        <p class="card-text">
+                            Miren este efecto bien facherito.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTÓN FINAL -->
+            <section class="final-cta">
+                <a href="dash.html" class="hero-button" onclick="event.preventDefault();">
+                    METETE
+                </a>
+                <div class="small-note">PSYKOSMOS · v0.02</div>
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+</html>
